@@ -23,14 +23,16 @@ contract FundMe {
         // msg.sender = address
         // payable(msg.sender) = payable address
         
-        // transfer
-        payable(msg.sender).transfer(address(this).balance);
+        // // transfer
+        // payable(msg.sender).transfer(address(this).balance);
 
-        // send
-        bool sendSuccess = payable(msg.sender).transfer(address(this).balance);
-        require(sendSuccess, "Send failed");
+        // // send
+        // bool sendSuccess = payable(msg.sender).transfer(address(this).balance);
+        // require(sendSuccess, "Send failed");
 
-
+        // call - lower level command
+        (bool callSuccess, ) = payable(msg.sender).call{value: address(this).balance}("");
+        require(callSuccess, "Call failed");
     }
 }
 
