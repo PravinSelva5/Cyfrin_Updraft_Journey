@@ -11,10 +11,10 @@ contract FundMe {
     address[] public funders;
     mapping(address funder => uint256 amountFunded) public addressToAmountFunded;
 
-    address public owner;
+    address public immutable i_owner;
 
     constructor()  {
-        owner = msg.sender;
+        i_owner = msg.sender;
     }
 
     function withdraw() public onlyOwner {
@@ -44,7 +44,7 @@ contract FundMe {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Sender is not owner!");
+        require(msg.sender == i_owner, "Sender is not owner!");
         _;
     }
 
@@ -64,5 +64,14 @@ NOTES
 - With Solidity, you always want to MULTIPLY then DIVIDE.
 
 - A library embedded into the contract if all library functions are internal. Otherwise the library must be deployed and then linked before the contract is deployed.
+
+
+- Constant and Immutable variables help reduce the total gas consumption of your smart contract. If there are variables that won't change, it is better to use these keywords to keep the smart contract cost low.
+- For constant variables, you want to name the variable ALL CAPS.
+
+Advice from Patrick: GO FOR GAS OPTIMIZATION ONCE YOU'RE REALLY GOOD
+
+- Variables that we set one time but outside the same line that they are declared, we set them for example in the constructor, we can name them immutable
+
 
 */
