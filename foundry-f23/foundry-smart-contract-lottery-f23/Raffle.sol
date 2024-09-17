@@ -35,12 +35,21 @@ contract Raffle {
     error Raffle__SendMoreToEnterRaffle();
 
     uint256 private immutable i_entranceFee;
+    // @dev the duration of the lottery in seconds
+    uint256 private immutable i_interval;
+    address payable[] private s_players;
+    uint256 private s_lastTimeStamp;
 
-    constructor(uint256 entranceFee) {
+    /* Events */
+    event RaffleEntered(address indexed player);
+
+    constructor(uint256 entranceFee, uint256 interval) {
         i_entranceFee = entranceFee;
+        i_interval = interval;
+        s_lastTimeStamp = block.timestamp;
     } 
     
-    function enterRaffle() public payable {
+    function enterRaffle() external payable {
         // First Iteration -> require(msg.value >= i_entranceFee, "Not enough ETH sent!");
         // Update to error handling:
         if (msg.value < i_entranceFee){
@@ -48,16 +57,28 @@ contract Raffle {
         }
         // Latest Update in latest solidity update with
         //require(msg.value >= i_entranceFee, SendMoreToEnterRaffle());
-
-
+        s_players.push(payable(msg.sender));
+        // Rule of thumb: emit an event whenever we update a storage variable
+        // Two reasons why people would work with events:
+        //      1. Makes migration easier
+        //      2. Makes front end "indexing" easier
+        emit RaffleEntered(msg.sender);
     }
+    // 1. Get a random number
+    // 2. Use the random number to pick a s_players
+    // 3. Be automatically called
+    function pickWinner() external {
+        // check to see if enough time has passed
+        if ((block.timestamp - lastTimeStamp) < i_interval) {
+            revert();
+        }
 
-    function pickWinner() public {}
+        
+    }
 
 
     /** Getter Functions **/
     function getEntranceFee() external view returns(uint256) {
         return i_entranceFee;
     }
-
 }
